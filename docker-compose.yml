@@ -3,7 +3,7 @@ version: '3.7'
 services:
   # Airflow PostgreSQL Database
   airflow_db:
-    image: postgres:13-alpine
+    image: postgres:16.0
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -16,7 +16,7 @@ services:
   # Apache Airflow Webserver
   airflow_webserver:
     command: bash -c "airflow db init && airflow webserver && airflow users  create --role Admin --username admin --email admin --firstname admin --lastname admin --password admin"
-    image: apache/airflow:2.9.1
+    image: apache/airflow:latest
     restart: always
     depends_on:
       - airflow_db
@@ -29,7 +29,7 @@ services:
         max-size: 10m
         max-file: "3"
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
       - ./requirements.txt:/opt/airflow/requirements.txt
     ports:
       - "8080:8080"
